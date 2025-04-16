@@ -5,94 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transect Dashboard Sidebar</title>
   <style>
-    body { margin:0; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; height:100vh; }
-    .sidebar { width:300px; background:#1f2937; color:#f9fafb; display:flex; flex-direction:column; padding:16px; }
-    .sidebar h2 { margin:0 0 12px; font-size:1.25rem; border-bottom:1px solid #374151; padding-bottom:4px; }
-    .menu-container { display:none; flex-direction:column; }
+    body { margin:0; font-family:'Segoe UI', Tahoma, sans-serif; display:flex; flex-direction:column; height:100vh; }
+    .header { background:#1f2937; color:#f9fafb; padding:16px; }
+    .header h2 { margin:0 0 8px; font-size:1.25rem; border-bottom:1px solid #374151; padding-bottom:4px; }
+    .menu-container { display:none; flex-wrap:wrap; }
     .menu-container.active { display:flex; }
-    .menu-container button { background:#374151; border:none; color:#f9fafb; padding:10px; margin:4px 0; text-align:left; font-size:0.95rem; border-radius:4px; cursor:pointer; }
+    .menu-container button { background:#374151; border:none; color:#f9fafb; padding:10px 16px; margin:4px; font-size:0.95rem; border-radius:4px; cursor:pointer; }
     .menu-container button:hover { background:#4b5563; }
     .menu-container .back { background:#6b7280; }
     .menu-container .back:hover { background:#9ca3af; }
-    .content { flex:1; background:#ffffff; padding:24px; overflow:auto; }
-    #plotContainer img { max-width:100%; height:auto; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+    .content { flex:1; background:#ffffff; padding:24px; overflow:auto; display:flex; justify-content:center; align-items:center; }
+    #plotContainer img { max-width:100%; max-height:100%; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
   </style>
 </head>
 <body>
-  <nav class="sidebar">
+  <header class="header">
     <h2>Menu</h2>
-    <!-- Main menu -->
     <div id="mainMenu" class="menu-container active">
       <button data-action="openSubmenu" data-target="transectMenu">Transects</button>
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/PIER_URL/data">Piper Diagram</button>
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/DIST_TEMP_URL/data">Distance vs Temp</button>
     </div>
-    <!-- Transect submenu -->
     <div id="transectMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
       <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Logan Transect">Logan (B)</button>
       <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Hyrum Transect">Hyrum (A)</button>
     </div>
-    <!-- Plot type submenu -->
     <div id="plotTypeMenu" class="menu-container">
       <button class="back" data-action="back" data-target="transectMenu">← Back</button>
       <button data-action="showPlot" data-url-field="plot" data-transect="">Cross-Section</button>
       <button data-action="showPlot" data-url-field="parameters" data-transect="">Recharge Parameters</button>
       <button data-action="openSubmenu" data-target="ionMenu">Ion Chemistry</button>
     </div>
-    <!-- Ion submenu -->
     <div id="ionMenu" class="menu-container">
       <button class="back" data-action="back" data-target="plotTypeMenu">← Back</button>
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/PIPE_R_URL/data">Piper</button>
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/STIFF_R_URL/data">Stiff</button>
     </div>
-  </nav>
+  </header>
   <main class="content">
-    <div id="plotContainer"><em>Select a menu option.</em></div>
+    <div id="plotContainer"><em>Select a menu option above.</em></div>
   </main>
 
   <script>
     const data = {
-      "Logan Transect": {
-        plot:    "https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data",
-        parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data",
-        ions:    "https://uofu.maps.arcgis.com/sharing/rest/content/items/XXX_ION_LOGAN/data"
-      },
-      "Hyrum Transect": {
-        plot:    "https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data",
-        parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data",
-        ions:    "https://uofu.maps.arcgis.com/sharing/rest/content/items/YYY_ION_HYRUM/data"
-      }
+      "Logan Transect": { plot:"https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data", parameters:"https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data", ions:"https://uofu.maps.arcgis.com/sharing/rest/content/items/XXX_ION_LOGAN/data" },
+      "Hyrum Transect": { plot:"https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data", parameters:"https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data", ions:"https://uofu.maps.arcgis.com/sharing/rest/content/items/YYY_ION_HYRUM/data" }
     };
     let currentTransect = null;
-
     const containers = document.querySelectorAll('.menu-container');
-    function showContainer(id) {
-      containers.forEach(c=> c.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    document.querySelectorAll('[data-action]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const action = btn.dataset.action;
-        if(action==='openSubmenu'){
-          const target = btn.dataset.target;
-          currentTransect = btn.dataset.transect || currentTransect;
-          // Pass transect to next
-          document.querySelectorAll(`#${target} [data-url-field]`).forEach(el=> el.dataset.transect = currentTransect);
-          showContainer(target);
-        } else if(action==='back'){
-          showContainer(btn.dataset.target);
-        } else if(action==='showPlot'){
-          let url = btn.dataset.url;
-          if(!url){
-            const field = btn.dataset.urlField;
-            url = data[currentTransect][field];
-          }
-          document.getElementById('plotContainer').innerHTML = `<img src="${url}"/>`;
-        }
-      });
-    });
+    function showContainer(id) { containers.forEach(c=>c.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    document.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{
+      const action=btn.dataset.action;
+      if(action==='openSubmenu'){
+        const t=btn.dataset.target; currentTransect=btn.dataset.transect||currentTransect;
+        document.querySelectorAll(`#${t} [data-url-field]`).forEach(el=>el.dataset.transect=currentTransect);
+        showContainer(t);
+      } else if(action==='back'){
+        showContainer(btn.dataset.target);
+      } else if(action==='showPlot'){
+        let url=btn.dataset.url||data[currentTransect][btn.dataset.urlField];
+        document.getElementById('plotContainer').innerHTML=`<img src="${url}" alt="Plot"/>`;
+      }
+    }));
   </script>
 </body>
 </html>

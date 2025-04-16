@@ -2,20 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transect Dashboard Sidebar</title>
   <style>
-    body { margin:0; font-family:'Segoe UI', Tahoma, sans-serif; display:flex; flex-direction:column; height:100vh; }
-    .header { background:#1f2937; color:#f9fafb; padding:16px; }
-    .header h2 { margin:0 0 8px; font-size:1.25rem; border-bottom:1px solid #374151; padding-bottom:4px; }
-    .menu-container { display:none; flex-wrap:wrap; }
-    .menu-container.active { display:flex; }
-    .menu-container button { background:#374151; border:none; color:#f9fafb; padding:10px 16px; margin:4px; font-size:0.95rem; border-radius:4px; cursor:pointer; }
-    .menu-container button:hover { background:#4b5563; }
-    .menu-container .back { background:#6b7280; }
-    .menu-container .back:hover { background:#9ca3af; }
-    .content { flex:1; background:#ffffff; padding:24px; overflow:auto; display:flex; justify-content:center; align-items:center; }
-    #plotContainer img { max-width:100%; max-height:100%; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 16px;
+    }
+    .header h2 {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+      border-bottom: 1px solid #374151;
+      padding-bottom: 4px;
+    }
+    .menu-container {
+      display: none;
+      flex-wrap: wrap;
+    }
+    .menu-container.active {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .menu-container button {
+      background: #374151;
+      border: none;
+      color: #f9fafb;
+      padding: 10px 16px;
+      margin: 4px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .menu-container button:hover {
+      background: #4b5563;
+    }
+    .menu-container .back {
+      background: #6b7280;
+    }
+    .menu-container .back:hover {
+      background: #9ca3af;
+    }
+    .content {
+      flex: 1;
+      background: #ffffff;
+      padding: 24px;
+      overflow: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #plotContainer img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
@@ -46,26 +95,29 @@
   <main class="content">
     <div id="plotContainer"><em>Select a menu option above.</em></div>
   </main>
-
   <script>
     const data = {
-      "Logan Transect": { plot:"https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data", parameters:"https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data", ions:"https://uofu.maps.arcgis.com/sharing/rest/content/items/XXX_ION_LOGAN/data" },
-      "Hyrum Transect": { plot:"https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data", parameters:"https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data", ions:"https://uofu.maps.arcgis.com/sharing/rest/content/items/YYY_ION_HYRUM/data" }
+      "Logan Transect": { plot: "https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data", parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data" },
+      "Hyrum Transect": { plot: "https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data", parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data" }
     };
     let currentTransect = null;
     const containers = document.querySelectorAll('.menu-container');
-    function showContainer(id) { containers.forEach(c=>c.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    document.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{
-      const action=btn.dataset.action;
-      if(action==='openSubmenu'){
-        const t=btn.dataset.target; currentTransect=btn.dataset.transect||currentTransect;
-        document.querySelectorAll(`#${t} [data-url-field]`).forEach(el=>el.dataset.transect=currentTransect);
-        showContainer(t);
-      } else if(action==='back'){
+    function showContainer(id) {
+      containers.forEach(c => c.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      if (action === 'openSubmenu') {
+        const target = btn.dataset.target;
+        currentTransect = btn.dataset.transect || currentTransect;
+        document.querySelectorAll(`#${target} [data-url-field]`).forEach(el => el.dataset.transect = currentTransect);
+        showContainer(target);
+      } else if (action === 'back') {
         showContainer(btn.dataset.target);
-      } else if(action==='showPlot'){
-        let url=btn.dataset.url||data[currentTransect][btn.dataset.urlField];
-        document.getElementById('plotContainer').innerHTML=`<img src="${url}" alt="Plot"/>`;
+      } else if (action === 'showPlot') {
+        const url = btn.dataset.url || data[currentTransect][btn.dataset.urlField];
+        document.getElementById('plotContainer').innerHTML = `<img src="${url}" alt="Plot"/>`;
       }
     }));
   </script>

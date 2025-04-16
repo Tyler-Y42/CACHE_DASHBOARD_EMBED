@@ -69,21 +69,21 @@
 </head>
 <body>
   <header class="header">
-    <h2>Menu</h2>
+    <h2 id="headerTitle">Data Selector</h2>
     <div id="mainMenu" class="menu-container active">
       <button data-action="openSubmenu" data-target="transectMenu">Transects</button>
-      <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/PIER_URL/data">Piper Diagram</button>
+      <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/7fe95b3668074b0ab6baf96b9e6d256f/data">Piper Diagram</button>
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/DIST_TEMP_URL/data">Distance vs Temp</button>
     </div>
     <div id="transectMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
-      <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Logan Transect">Logan (B)</button>
-      <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Hyrum Transect">Hyrum (A)</button>
+      <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Logan Transect (B)">Logan (B)</button>
+      <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Hyrum Transect (A)">Hyrum (A)</button>
     </div>
     <div id="plotTypeMenu" class="menu-container">
       <button class="back" data-action="back" data-target="transectMenu">← Back</button>
-      <button data-action="showPlot" data-url-field="plot" data-transect="">Cross-Section</button>
-      <button data-action="showPlot" data-url-field="parameters" data-transect="">Recharge Parameters</button>
+      <button data-action="showPlot" data-url-field="plot">Cross-Section</button>
+      <button data-action="showPlot" data-url-field="parameters">Recharge Parameters</button>
       <button data-action="openSubmenu" data-target="ionMenu">Ion Chemistry</button>
     </div>
     <div id="ionMenu" class="menu-container">
@@ -96,30 +96,48 @@
     <div id="plotContainer"><em>Select a menu option above.</em></div>
   </main>
   <script>
-    const data = {
-      "Logan Transect": { plot: "https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data", parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data" },
-      "Hyrum Transect": { plot: "https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data", parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data" }
+    var headerTitle = document.getElementById('headerTitle');
+    var data = {
+      "Logan Transect (B)": { plot: "https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data", parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data" },
+      "Hyrum Transect (A)": { plot: "https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data", parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data" }
     };
-    let currentTransect = null;
-    const containers = document.querySelectorAll('.menu-container');
+    var containers = document.querySelectorAll('.menu-container');
     function showContainer(id) {
-      containers.forEach(c => c.classList.remove('active'));
+      containers.forEach(function(c) { c.classList.remove('active'); });
       document.getElementById(id).classList.add('active');
     }
-    document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', () => {
-      const action = btn.dataset.action;
-      if (action === 'openSubmenu') {
-        const target = btn.dataset.target;
-        currentTransect = btn.dataset.transect || currentTransect;
-        document.querySelectorAll(`#${target} [data-url-field]`).forEach(el => el.dataset.transect = currentTransect);
-        showContainer(target);
-      } else if (action === 'back') {
-        showContainer(btn.dataset.target);
-      } else if (action === 'showPlot') {
-        const url = btn.dataset.url || data[currentTransect][btn.dataset.urlField];
-        document.getElementById('plotContainer').innerHTML = `<img src="${url}" alt="Plot"/>`;
-      }
-    }));
+    document.querySelectorAll('[data-action]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var action = btn.getAttribute('data-action');
+        if (action === 'openSubmenu') {
+          var target = btn.getAttribute('data-target');
+          var tran = btn.getAttribute('data-transect');
+          if (target === 'transectMenu') {
+            headerTitle.innerText = 'Transects';
+          } else if (tran) {
+            headerTitle.innerText = tran;
+          } else if (target === 'ionMenu') {
+            headerTitle.innerText += ' – ' + btn.innerText;
+          }
+          if (tran) { currentTransect = tran; }
+          showContainer(target);
+        } else if (action === 'back') {
+          var prev = btn.getAttribute('data-target');
+          if (prev === 'mainMenu') {
+            headerTitle.innerText = 'Data Selector';
+          } else if (prev === 'transectMenu') {
+            headerTitle.innerText = 'Transects';
+          } else if (prev === 'plotTypeMenu') {
+            headerTitle.innerText = currentTransect;
+          }
+          showContainer(prev);
+        } else if (action === 'showPlot') {
+          var url = btn.getAttribute('data-url') || data[currentTransect][btn.getAttribute('data-url-field')];
+          document.getElementById('plotContainer').innerHTML = '<img src="' + url + '" alt="Plot"/>';
+        }
+      });
+    });
+    showContainer('mainMenu');
   </script>
 </body>
 </html>

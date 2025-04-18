@@ -83,9 +83,16 @@
       margin-bottom: 1rem;
       font-size: 1rem;
     }
+    .welcome-text img {
+      display: block;
+      max-width: 100%;
+      margin-top: 16px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
 
     /* Plot image styling */
-    #plotContainer img {
+    #plotContainer img.plot {
       max-width: 100%;
       max-height: 100%;
       border-radius: 4px;
@@ -159,6 +166,9 @@
         selector above contains plots that include all wells in the study area,
         in addition to plots for each respective flow transect.
       </p>
+      <!-- Landing page image -->
+      <img src="https://uofu.maps.arcgis.com/sharing/rest/content/items/382de976b7684f36802f5778f639182c/data"
+           alt="Cache Valley groundwater overview map">
     </div>
   </main>
 
@@ -219,14 +229,13 @@
           let url = btn.dataset.url ||
                     data[currentTransect][btn.dataset.urlField];
 
-          // replace welcome text with the selected plot
           document.getElementById('plotContainer').innerHTML =
-            `<img src="${url}" alt="Plot">`;
+            `<img class="plot" src="${url}" alt="Plot">`;
         }
       });
     });
 
-    // start on the main menu
+    // Initialize on page load
     showContainer('mainMenu');
   </script>
 

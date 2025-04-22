@@ -7,103 +7,101 @@
   <!-- ───────────────────  CSS  ─────────────────── -->
   <style>
     /* Page layout */
-    html,body {
-      margin:0;
-      padding:0;
-      height:100%;
-      font-family:'Segoe UI',Tahoma,sans-serif;
-      display:flex;
-      flex-direction:column;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Header */
     .header {
-      background:#1f2937;
-      color:#f9fafb;
-      padding:16px;
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 16px;
     }
     .header h2 {
-      margin:0 0 8px;
-      font-size:1.25rem;
-      border-bottom:1px solid #374151;
-      padding-bottom:4px;
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+      border-bottom: 1px solid #374151;
+      padding-bottom: 4px;
     }
 
     /* Menus */
     .menu-container {
-      display:none;
-      flex-wrap:wrap;
+      display: none;
+      flex-wrap: wrap;
     }
     .menu-container.active {
-      display:flex;
+      display: flex;
     }
 
     /* Buttons */
     .menu-container button {
-      background:#374151;
-      border:none;
-      color:#f9fafb;
-      padding:10px 16px;
-      margin:4px;
-      font-size:0.95rem;
-      border-radius:4px;
-      cursor:pointer;
+      background: #374151;
+      border: none;
+      color: #f9fafb;
+      padding: 10px 16px;
+      margin: 4px;
+      font-size: 0.95rem;
+      border-radius: 4px;
+      cursor: pointer;
     }
     .menu-container button:hover {
-      background:#4b5563;
+      background: #4b5563;
     }
     .menu-container .back {
-      background:#6b7280;
+      background: #6b7280;
     }
     .menu-container .back:hover {
-      background:#9ca3af;
+      background: #9ca3af;
     }
 
-    /* Content area – original landing styling */
+    /* Landing‐page content – original styling, no centering */
     .content {
-      flex:1;
-      background:#ffffff;
-      padding:24px;
-      overflow:auto;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
+      flex: 1;
+      background: #ffffff;
+      padding: 24px;
+      overflow: auto;
+      /* default block layout */
     }
 
-    /* Landing text & image */
+    /* Welcome text & image */
     .welcome-text {
-      max-width:800px;
-      color:#333;
-      line-height:1.6;
+      max-width: 800px;
+      color: #333;
+      line-height: 1.6;
     }
     .welcome-text h3 {
-      margin-top:0;
-      font-size:1.5rem;
-      color:#1f2937;
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: #1f2937;
     }
     .welcome-text img {
-      display:block;
-      max-width:100%;
-      margin-top:16px;
-      border-radius:4px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      display: block;
+      max-width: 100%;
+      margin-top: 16px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Dynamic plot formatting – overrides only when .has-plot is present */
+    /* Plot‐mode overrides */
     #plotContainer.has-plot {
-      overflow:hidden;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      width:100%;
-      height:100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
     }
     #plotContainer.has-plot img.plot {
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      border-radius:4px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -115,17 +113,9 @@
 
     <!-- Main menu -->
     <div id="mainMenu" class="menu-container active">
-      <button id="homeBack"
-              class="back"
-              data-action="back"
-              data-target="landing"
-              style="display:none;">← Back</button>
-      <button data-action="openSubmenu"
-              data-target="transectMenu"
-              data-transect="Transect Plots">Transect Plots</button>
-      <button data-action="openSubmenu"
-              data-target="studyMenu"
-              data-transect="Study-Wide Plots">Study-Wide Plots</button>
+      <button id="homeBack" class="back" data-action="back" data-target="landing" style="display:none;">← Back</button>
+      <button data-action="openSubmenu" data-target="transectMenu" data-transect="Transect Plots">Transect Plots</button>
+      <button data-action="openSubmenu" data-target="studyMenu" data-transect="Study-Wide Plots">Study-Wide Plots</button>
     </div>
 
     <!-- Transect list -->
@@ -135,7 +125,7 @@
       <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Logan Transect (B)">Logan (B)</button>
     </div>
 
-    <!-- Study wide plots menu -->
+    <!-- Study‐wide plots menu -->
     <div id="studyMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
       <button data-action="openSubmenu" data-target="piperMenu" data-transect="Piper Diagrams">Piper Diagrams</button>
@@ -175,17 +165,13 @@
 
   <!-- ───────────────────  JS  ─────────────────── -->
   <script>
-    /* Selected transect or section */
     let currentSection = null;
-
-    /* DOM refs */
     const headerTitle = document.getElementById('headerTitle');
-    const containers  = document.querySelectorAll('.menu-container');
-    const plotDiv     = document.getElementById('plotContainer');
+    const containers = document.querySelectorAll('.menu-container');
+    const plotDiv = document.getElementById('plotContainer');
     const landingHTML = plotDiv.innerHTML;
     const homeBackBtn = document.getElementById('homeBack');
 
-    /* Transect plot URLs */
     const data = {
       "Logan Transect (B)": {
         cross:      "https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data",
@@ -201,61 +187,48 @@
       }
     };
 
-    /* Show specified menu */
-    const showContainer = id => {
+    function showContainer(id) {
       containers.forEach(c => c.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-    };
+    }
 
-    /* Unified button handler */
     document.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const action = btn.dataset.action;
-
         if (action === 'openSubmenu') {
-          const tgt = btn.dataset.target;
-          const tr  = btn.dataset.transect;
-          headerTitle.textContent = tr;
-          currentSection = tr;
-          showContainer(tgt);
+          headerTitle.textContent = btn.dataset.transect;
+          currentSection = btn.dataset.transect;
+          showContainer(btn.dataset.target);
           return;
         }
-
         if (action === 'back') {
-          const prev = btn.dataset.target;
-          if (prev === 'landing') {
+          if (btn.dataset.target === 'landing') {
             currentSection = null;
             headerTitle.textContent = 'Data Selector';
             plotDiv.innerHTML = landingHTML;
             plotDiv.classList.remove('has-plot');
             homeBackBtn.style.display = 'none';
             showContainer('mainMenu');
-          } else {
-            headerTitle.textContent = 
-              prev === 'mainMenu'      ? 'Data Selector'     :
-              prev === 'transectMenu'  ? 'Transect Plots'    :
-              prev === 'studyMenu'     ? 'Study-Wide Plots'  :
-                                         currentSection;
-            showContainer(prev);
+            return;
           }
+          const prev = btn.dataset.target;
+          headerTitle.textContent =
+            prev === 'mainMenu'      ? 'Data Selector'    :
+            prev === 'transectMenu'  ? 'Transect Plots'   :
+            prev === 'studyMenu'     ? 'Study-Wide Plots' : currentSection;
+          showContainer(prev);
           return;
         }
-
         if (action === 'showPlot') {
-          let url = btn.dataset.url;
-          if (!url && currentSection && data[currentSection]) {
-            url = data[currentSection][btn.dataset.urlField];
-          }
-          if (url) {
-            plotDiv.innerHTML = `<img class="plot" src="${url}" alt="Plot">`;
-            plotDiv.classList.add('has-plot');
-            homeBackBtn.style.display = 'inline-block';
-          }
+          let url = btn.dataset.url || data[currentSection]?.[btn.dataset.urlField];
+          if (!url) return;
+          plotDiv.innerHTML = `<img class="plot" src="${url}" alt="Plot">`;
+          plotDiv.classList.add('has-plot');
+          homeBackBtn.style.display = 'inline-block';
         }
       });
     });
 
-    /* Initial UI state */
     showContainer('mainMenu');
   </script>
 </body>

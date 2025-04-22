@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;            /* hide page‐level scroll */
+      overflow: hidden;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       display: flex;
       flex-direction: column;
@@ -65,23 +65,26 @@
       flex: 1;
       background: #ffffff;
       padding: 24px;
-      overflow: hidden;           /* remove scrollbars */
-      display: flex;
-      justify-content: center;
-      align-items: center;        /* center image vertically */
+      overflow: hidden;
+      /* normal block flow for landing text */
+      display: block;
     }
 
-    /* Plot container fills the content */
+    /* Plot container */
     #plotContainer {
       width: 100%;
       height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
     }
 
-    /* Welcome text & image (landing) */
+    /* When we have a dynamic plot image, center & scale it */
+    #plotContainer:has(> img.plot) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Landing text & image */
     .welcome-text {
       max-width: 800px;
       color: #333;
@@ -100,7 +103,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Dynamic plot images scale to fit without cropping */
+    /* Dynamic plot image sizing */
     #plotContainer img.plot {
       width: 100%;
       height: 100%;
@@ -112,31 +115,27 @@
 </head>
 <body>
 
-  <!-- ──────────  HEADER & MENUS  ────────── -->
+  <!-- HEADER & MENUS -->
   <header class="header">
     <h2 id="headerTitle">Data Selector</h2>
 
-    <!-- Main menu -->
     <div id="mainMenu" class="menu-container active">
       <button id="homeBack" class="back" data-action="back" data-target="landing" style="display:none;">← Back</button>
-      <button data-action="openSubmenu" data-target="transectMenu" data-transect="Transect Plots">Transect Plots</button>
-      <button data-action="openSubmenu" data-target="studyMenu"    data-transect="Study‑Wide Plots">Study‑Wide Plots</button>
+      <button data-action="openSubmenu" data-target="transectMenu" data-transect="Transect Plots">Transect Plots</button>
+      <button data-action="openSubmenu" data-target="studyMenu" data-transect="Study‑Wide Plots">Study‑Wide Plots</button>
     </div>
 
-    <!-- Transect list -->
     <div id="transectMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
       <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Hyrum Transect (A)">Hyrum (A)</button>
       <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Logan Transect (B)">Logan (B)</button>
     </div>
 
-    <!-- Study‑wide plots menu -->
     <div id="studyMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
-      <button data-action="openSubmenu" data-target="piperMenu" data-transect="Piper Diagrams">Piper Diagrams</button>
+      <button data-action="openSubmenu" data-target="piperMenu" data-transect="Piper Diagrams">Piper Diagrams</button>
     </div>
 
-    <!-- Piper submenu -->
     <div id="piperMenu" class="menu-container">
       <button class="back" data-action="back" data-target="studyMenu">← Back</button>
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/a97af168355c47e9b05530b73b16a013/data">Piper ‑ Quads</button>
@@ -144,17 +143,16 @@
       <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/6ba1f21a102649bbb83dc24ac35ca183/data">Piper ‑ Latitude</button>
     </div>
 
-    <!-- Plot‑type menu -->
     <div id="plotTypeMenu" class="menu-container">
       <button class="back" data-action="back" data-target="transectMenu">← Back</button>
       <button data-action="showPlot" data-url-field="cross">Cross‑Section</button>
-      <button data-action="showPlot" data-url-field="parameters">Recharge Parameters</button>
+      <button data-action="showPlot" data-url-field="parameters">Recharge Parameters</button>
       <button data-action="showPlot" data-url-field="piper">Piper</button>
       <button data-action="showPlot" data-url-field="stiff">Stiff</button>
     </div>
   </header>
 
-  <!-- ──────────  LANDING / PLOT AREA  ────────── -->
+  <!-- LANDING / PLOT AREA -->
   <main class="content">
     <div id="plotContainer" class="welcome-text">
       <h3>Welcome to the Dashboard!</h3>
@@ -169,7 +167,7 @@
     </div>
   </main>
 
-  <!-- ───────────────────  JS  ─────────────────── -->
+  <!-- JAVASCRIPT -->
   <script>
     let currentSection = null;
     const headerTitle = document.getElementById('headerTitle');
@@ -216,15 +214,14 @@
           }
           const prev = btn.dataset.target;
           headerTitle.textContent =
-            prev === 'mainMenu'      ? 'Data Selector'     :
-            prev === 'transectMenu'  ? 'Transect Plots'    :
-            prev === 'studyMenu'     ? 'Study‑Wide Plots'  :
-                                      currentSection;
+            prev === 'mainMenu'     ? 'Data Selector'    :
+            prev === 'transectMenu' ? 'Transect Plots'   :
+            prev === 'studyMenu'    ? 'Study‑Wide Plots' :
+                                     currentSection;
           return showContainer(prev);
         }
         if (action === 'showPlot') {
-          let url = btn.dataset.url
-            || data[currentSection]?.[btn.dataset.urlField];
+          let url = btn.dataset.url || data[currentSection]?.[btn.dataset.urlField];
           if (!url) return;
           url += url.includes('?') ? '&v=2' : '?v=2';
           plotDiv.innerHTML = `<img class="plot" src="${url}" alt="Plot">`;

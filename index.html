@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* hide page‐level scroll */
+      overflow: hidden; /* viewport fixed */
       font-family: 'Segoe UI', Tahoma, sans-serif;
       display: flex;
       flex-direction: column;
@@ -60,28 +60,27 @@
       background: #9ca3af;
     }
 
-    /* Content area: allow scrolling when needed */
+    /* Content area */
     .content {
       flex: 1;
       background: #ffffff;
       padding: 24px;
-      overflow: auto;    /* allow scroll on landing */
-      display: block;    /* normal flow for landing text */
+      overflow: auto;      /* allow landing to scroll */
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     /* Plot container base */
     #plotContainer {
       width: 100%;
       height: 100%;
+      overflow: auto;      /* landing scroll */
+      display: block;      /* landing flow */
     }
 
-    /* Landing view: scrollable text */
-    #plotContainer:not(:has(> img.plot)) {
-      overflow: auto;
-    }
-
-    /* Dynamic plot view: center & hide overflow */
-    #plotContainer:has(> img.plot) {
+    /* When a plot is shown */
+    #plotContainer.has-plot {
       overflow: hidden;
       display: flex;
       justify-content: center;
@@ -107,8 +106,8 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Dynamic plot images: fit container */
-    #plotContainer img.plot {
+    /* Dynamic plot images */
+    #plotContainer.has-plot img.plot {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -124,27 +123,44 @@
     <h2 id="headerTitle">Data Selector</h2>
 
     <div id="mainMenu" class="menu-container active">
-      <button id="homeBack" class="back" data-action="back" data-target="landing" style="display:none;">← Back</button>
-      <button data-action="openSubmenu" data-target="transectMenu" data-transect="Transect Plots">Transect Plots</button>
-      <button data-action="openSubmenu" data-target="studyMenu" data-transect="Study‑Wide Plots">Study‑Wide Plots</button>
+      <button id="homeBack"
+              class="back"
+              data-action="back"
+              data-target="landing"
+              style="display:none;">← Back</button>
+      <button data-action="openSubmenu"
+              data-target="transectMenu"
+              data-transect="Transect Plots">Transect Plots</button>
+      <button data-action="openSubmenu"
+              data-target="studyMenu"
+              data-transect="Study‑Wide Plots">Study‑Wide Plots</button>
     </div>
 
     <div id="transectMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
-      <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Hyrum Transect (A)">Hyrum (A)</button>
-      <button data-action="openSubmenu" data-target="plotTypeMenu" data-transect="Logan Transect (B)">Logan (B)</button>
+      <button data-action="openSubmenu"
+              data-target="plotTypeMenu"
+              data-transect="Hyrum Transect (A)">Hyrum (A)</button>
+      <button data-action="openSubmenu"
+              data-target="plotTypeMenu"
+              data-transect="Logan Transect (B)">Logan (B)</button>
     </div>
 
     <div id="studyMenu" class="menu-container">
       <button class="back" data-action="back" data-target="mainMenu">← Back</button>
-      <button data-action="openSubmenu" data-target="piperMenu" data-transect="Piper Diagrams">Piper Diagrams</button>
+      <button data-action="openSubmenu"
+              data-target="piperMenu"
+              data-transect="Piper Diagrams">Piper Diagrams</button>
     </div>
 
     <div id="piperMenu" class="menu-container">
       <button class="back" data-action="back" data-target="studyMenu">← Back</button>
-      <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/a97af168355c47e9b05530b73b16a013/data">Piper ‑ Quads</button>
-      <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/38bfee861230478383b6443ca168eb86/data">Piper ‑ Longitude</button>
-      <button data-action="showPlot" data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/6ba1f21a102649bbb83dc24ac35ca183/data">Piper ‑ Latitude</button>
+      <button data-action="showPlot"
+              data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/a97af168355c47e9b05530b73b16a013/data">Piper ‑ Quads</button>
+      <button data-action="showPlot"
+              data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/38bfee861230478383b6443ca168eb86/data">Piper ‑ Longitude</button>
+      <button data-action="showPlot"
+              data-url="https://uofu.maps.arcgis.com/sharing/rest/content/items/6ba1f21a102649bbb83dc24ac35ca183/data">Piper ‑ Latitude</button>
     </div>
 
     <div id="plotTypeMenu" class="menu-container">
@@ -206,29 +222,31 @@
         if (action === 'openSubmenu') {
           headerTitle.textContent = btn.dataset.transect;
           currentSection = btn.dataset.transect;
-          return showContainer(btn.dataset.target);
+          showContainer(btn.dataset.target);
         }
         if (action === 'back') {
           if (btn.dataset.target === 'landing') {
             currentSection = null;
             headerTitle.textContent = 'Data Selector';
             plotDiv.innerHTML = landingHTML;
+            plotDiv.classList.remove('has-plot');
             homeBackBtn.style.display = 'none';
-            return showContainer('mainMenu');
+            showContainer('mainMenu');
+          } else {
+            const prev = btn.dataset.target;
+            headerTitle.textContent =
+              prev === 'mainMenu'     ? 'Data Selector'    :
+              prev === 'transectMenu' ? 'Transect Plots'   :
+              prev === 'studyMenu'    ? 'Study‑Wide Plots' : currentSection;
+            showContainer(prev);
           }
-          const prev = btn.dataset.target;
-          headerTitle.textContent =
-            prev === 'mainMenu'     ? 'Data Selector'    :
-            prev === 'transectMenu' ? 'Transect Plots'   :
-            prev === 'studyMenu'    ? 'Study‑Wide Plots' :
-                                     currentSection;
-          return showContainer(prev);
         }
         if (action === 'showPlot') {
           let url = btn.dataset.url || data[currentSection]?.[btn.dataset.urlField];
           if (!url) return;
           url += url.includes('?') ? '&v=2' : '?v=2';
           plotDiv.innerHTML = `<img class="plot" src="${url}" alt="Plot">`;
+          plotDiv.classList.add('has-plot');
           homeBackBtn.style.display = 'inline-block';
         }
       });

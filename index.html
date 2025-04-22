@@ -13,7 +13,7 @@
     .header{background:#1f2937;color:#f9fafb;padding:16px;}
     .header h2{margin:0 0 8px;font-size:1.25rem;border-bottom:1px solid #374151;padding-bottom:4px;}
 
-    /* Menes */
+    /* Menus */
     .menu-container{display:none;flex-wrap:wrap;}
     .menu-container.active{display:flex;}
 
@@ -24,7 +24,7 @@
     .menu-container .back:hover{background:#9ca3af;}
 
     /* Content area */
-    .content{flex:1;background:#ffffff;padding:24px;overflow:auto;display:flex;justify-content:center;align-items:flex-start;}
+    .content{flex:1;background:#ffffff;padding:24px;overflow:hidden;display:flex;justify-content:center;align-items:flex-start;}
 
     /* Landing text & image */
     .welcome-text{max-width:800px;color:#333;line-height:1.6;}
@@ -32,7 +32,7 @@
     .welcome-text img{display:block;max-width:100%;margin-top:16px;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.2);}
 
     /* Plot images */
-    #plotContainer img.plot{max-width:100%;max-height:100%;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.2);}  
+    #plotContainer img.plot{width:100%;height:100%;object-fit:contain;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.2);}  
   </style>
 </head>
 <body>
@@ -45,7 +45,7 @@
     <div id="mainMenu" class="menu-container active">
       <button id="homeBack" class="back" data-action="back" data-target="landing" style="display:none;">← Back</button>
       <button data-action="openSubmenu" data-target="transectMenu" data-transect="Transect Plots">Transect Plots</button>
-      <button data-action="openSubmenu" data-target="studyMenu" data-transect="Study-Wide Plots">Study-Wide Plots</button>
+      <button data-action="openSubmenu" data-target="studyMenu" data-transect="Study‑Wide Plots">Study‑Wide Plots</button>
     </div>
 
     <!-- Transect list -->
@@ -89,7 +89,8 @@
       <p>Use the selector above for study‑wide or transect‑specific plots.</p>
       <img src="https://uofu.maps.arcgis.com/sharing/rest/content/items/382de976b7684f36802f5778f639182c/data"
            alt="Cache Valley groundwater overview map">
-      <p>For web-map only, click <a href="https://uofu.maps.arcgis.com/apps/mapviewer/index.html?webmap=267f49b021d444a78dc8a42e03da18a8">HERE</a>. For plots only, click <a href="https://tyler-y42.github.io/CACHE_DASHBOARD_EMBED/">HERE</a>.</p>
+      <p>For web‑map only, click <a href="https://uofu.maps.arcgis.com/apps/mapviewer/index.html?webmap=267f49b021d444a78dc8a42e03da18a8">HERE</a>. 
+         For plots only, click <a href="https://tyler-y42.github.io/CACHE_DASHBOARD_EMBED/?v=2">HERE</a>.</p>
     </div>
   </main>
 
@@ -108,31 +109,31 @@
     /* Transect plot URLs */
     const data = {
       "Logan Transect (B)": {
-        cross:"https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data",
-        parameters:"https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data",
-        piper:"https://uofu.maps.arcgis.com/sharing/rest/content/items/39c6b8ae74f2486ca55ea17abe566053/data",
-        stiff:"https://uofu.maps.arcgis.com/sharing/rest/content/items/9b39079030df45dcb856529be1d935d7/data"
+        cross: "https://uofu.maps.arcgis.com/sharing/rest/content/items/e2e2fa4b2ed84182a8dad2d3d77097a3/data",
+        parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/5036ead16a224cc68c762c5c25476a38/data",
+        piper: "https://uofu.maps.arcgis.com/sharing/rest/content/items/39c6b8ae74f2486ca55ea17abe566053/data",
+        stiff: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9b39079030df45dcb856529be1d935d7/data"
       },
       "Hyrum Transect (A)": {
-        cross:"https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data",
-        parameters:"https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data",
-        piper:"https://uofu.maps.arcgis.com/sharing/rest/content/items/9b2266080f574954876598f82b88b355/data",
-        stiff:"https://uofu.maps.arcgis.com/sharing/rest/content/items/07dc72fe4d834fb58104780c6b56da20/data"
+        cross: "https://uofu.maps.arcgis.com/sharing/rest/content/items/77d3a3b837714c5e9e0bcfb5e11c8b9f/data",
+        parameters: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9987285a68f1475fbd25bbcbd2784cb0/data",
+        piper: "https://uofu.maps.arcgis.com/sharing/rest/content/items/9b2266080f574954876598f82b88b355/data",
+        stiff: "https://uofu.maps.arcgis.com/sharing/rest/content/items/07dc72fe4d834fb58104780c6b56da20/data"
       }
     };
 
     /* Show specified menu */
-    const showContainer = id=>{
-      containers.forEach(c=>c.classList.remove('active'));
+    const showContainer = id => {
+      containers.forEach(c => c.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     };
 
     /* Unified button handler */
-    document.querySelectorAll('[data-action]').forEach(btn=>{
-      btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
         const action = btn.dataset.action;
 
-        if(action==='openSubmenu'){
+        if (action === 'openSubmenu') {
           const tgt = btn.dataset.target;
           const tr  = btn.dataset.transect;
           headerTitle.textContent = tr;
@@ -141,32 +142,35 @@
           return;
         }
 
-        if(action==='back'){
+        if (action === 'back') {
           const prev = btn.dataset.target;
-          if(prev==='landing'){
-            currentSection=null;
-            headerTitle.textContent='Data Selector';
-            plotDiv.innerHTML=landingHTML;
-            homeBackBtn.style.display='none';
+          if (prev === 'landing') {
+            currentSection = null;
+            headerTitle.textContent = 'Data Selector';
+            plotDiv.innerHTML = landingHTML;
+            homeBackBtn.style.display = 'none';
             showContainer('mainMenu');
           } else {
-            headerTitle.textContent = (prev==='mainMenu') ? 'Data Selector'
-                                  : (prev==='transectMenu') ? 'Transect Plots'
-                                  : (prev==='studyMenu') ? 'Study Wide Plots'
-                                  : currentSection;
+            headerTitle.textContent = 
+              prev === 'mainMenu'      ? 'Data Selector'     :
+              prev === 'transectMenu'  ? 'Transect Plots'    :
+              prev === 'studyMenu'     ? 'Study‑Wide Plots'  :
+                                          currentSection;
             showContainer(prev);
           }
           return;
         }
 
-        if(action==='showPlot'){
+        if (action === 'showPlot') {
           let url = btn.dataset.url;
-          if(!url && currentSection && data[currentSection]){
+          if (!url && currentSection && data[currentSection]) {
             url = data[currentSection][btn.dataset.urlField];
           }
-          if(url){
+          if (url) {
+            // append cache‑bust if needed
+            url += url.includes('?') ? '&v=2' : '?v=2';
             plotDiv.innerHTML = `<img class="plot" src="${url}" alt="Plot">`;
-            homeBackBtn.style.display='inline-block';
+            homeBackBtn.style.display = 'inline-block';
           }
         }
       });

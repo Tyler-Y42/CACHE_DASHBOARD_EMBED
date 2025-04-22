@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* keep viewport fixed */
+      overflow: hidden;                /* fixed viewport */
       font-family: 'Segoe UI', Tahoma, sans-serif;
       display: flex;
       flex-direction: column;
@@ -60,7 +60,7 @@
       background: #9ca3af;
     }
 
-    /* Content area – no outer scroll */
+    /* Content area – no scroll on container */
     .content {
       flex: 1;
       background: #ffffff;
@@ -76,14 +76,17 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      display: block;
     }
 
-    /* Landing text scrolls within its 800px width */
+    /* Landing mode: scale everything to fit */
+    #plotContainer:not(.has-plot) {
+      transform: scale(0.85);         /* adjust factor as needed */
+      transform-origin: top center;
+    }
+
+    /* Landing text & image */
     .welcome-text {
       max-width: 800px;
-      max-height: 100%;
-      overflow-y: auto;
       margin: 0 auto;
       color: #333;
       line-height: 1.6;
@@ -101,7 +104,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Plot mode: center & fit image */
+    /* Plot mode: center & hide overflow */
     #plotContainer.has-plot {
       display: flex;
       justify-content: center;
@@ -229,11 +232,14 @@
     document.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const action = btn.dataset.action;
+
         if (action === 'openSubmenu') {
           headerTitle.textContent = btn.dataset.transect;
           currentSection = btn.dataset.transect;
           showContainer(btn.dataset.target);
+          return;
         }
+
         if (action === 'back') {
           if (btn.dataset.target === 'landing') {
             currentSection = null;
@@ -242,16 +248,17 @@
             plotDiv.classList.remove('has-plot');
             homeBackBtn.style.display = 'none';
             showContainer('mainMenu');
-          } else {
-            const prev = btn.dataset.target;
-            headerTitle.textContent =
-              prev === 'mainMenu'     ? 'Data Selector'    :
-              prev === 'transectMenu' ? 'Transect Plots'   :
-              prev === 'studyMenu'    ? 'Study‑Wide Plots' :
-                                       currentSection;
-            showContainer(prev);
+            return;
           }
+          const prev = btn.dataset.target;
+          headerTitle.textContent =
+            prev === 'mainMenu'     ? 'Data Selector'    :
+            prev === 'transectMenu' ? 'Transect Plots'   :
+            prev === 'studyMenu'    ? 'Study‑Wide Plots' : currentSection;
+          showContainer(prev);
+          return;
         }
+
         if (action === 'showPlot') {
           let url = btn.dataset.url || data[currentSection]?.[btn.dataset.urlField];
           if (!url) return;
